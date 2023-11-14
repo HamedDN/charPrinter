@@ -1,12 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <script src="../minJquery.js"></script>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>the Emoji printer</title>
+  <title>The Emoji printer</title>
   <style>
     * {
       box-sizing: border-box;
@@ -16,54 +14,90 @@
 
     body {
       height: 100vh;
+      font-family: Arial, sans-serif;
     }
 
     input {
-      width: 80%;
+      width: 60%;
       padding: 10px;
       margin: 10px;
       font-size: 20px;
-      border: 2px aqua solid;
+      border: 5px aqua solid;
       border-radius: 10px;
     }
+
     input::placeholder {
       color: rgb(200, 200, 200);
+      font-weight: bold;
     }
 
-    .result > * {
+    .result>* {
       margin: 10px;
       font-size: 20px;
       width: 500px;
+      word-break: break-all;
+    }
+
+    #copyButton {
+      padding: 10px;
+      margin-top: 20px;
+      background-color: aqua;
+      border: none;
+      font-weight: bold;
+      border-radius: 5px;
+      cursor: pointer;
     }
   </style>
 </head>
 
 <body>
-  <input type="text" placeholder="enter a char..." maxlength="10">
+  <input type="text" placeholder="Enter a char...">
   <input type="number" placeholder='Enter a number of char...' />
+  <button id="copyButton">Copy to Clipboard</button>
   <div class="result"></div>
+
   <script>
-    let div = $(".result"),
-      number = $('input[type="number"]'),
-      emoji = $('input[type="text"]');
+    document.addEventListener("DOMContentLoaded", function () {
+      let div = document.querySelector(".result");
+      let number = document.querySelector('input[type="number"]');
+      let emoji = document.querySelector('input[type="text"]');
+      let copyButton = document.getElementById('copyButton');
 
-    emoji.on("change", function(){
-      if(number.val.length == 0)
-        return;
+      emoji.addEventListener("input", function () {
+        if (number.value == 0) return;
+        add();
+      });
 
-      add();
+      number.addEventListener("input", function () {
+        add();
+      });
+
+      copyButton.addEventListener("click", function () {
+        copyToClipboard();
+      });
+
+      function add() {
+        div.innerHTML = '';
+        let fragment = document.createDocumentFragment();
+        for (let i = 0; i < number.value; i++) {
+          let span = document.createElement("span");
+          span.textContent = emoji.value;
+          fragment.appendChild(span);
+        }
+        div.appendChild(fragment);
+      }
+
+      function copyToClipboard() {
+        let textToCopy = div.innerText;
+        let textArea = document.createElement("textarea");
+        textArea.value = textToCopy;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textArea);
+        alert("Copied to clipboard!");
+      }
     });
-
-    number.on("change", function()
-    {
-      add()
-    });
-
-    function add(){
-      for(let i = 0;i < number.val();i++)
-      div.append($("<span>").text(emoji.val()));
-    }
   </script>
 </body>
-
 </html>
